@@ -1,6 +1,6 @@
 <?php
 class XmlController extends FlexigridAppController {
-	var $users = null;
+	var $uses = null;
 	var $name = 'Xml';
 	var $helpers = array('Html', 'Form');
 	var $components = array('RequestHandler');
