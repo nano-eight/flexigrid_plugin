@@ -7,7 +7,7 @@ class FlexigridComponent extends Object {
 		$this->_set($settings);
 	}
 	
-	function create($options) {
+	function create($options = array()) {
 		
 		// default column setting
 		$default_column = array(
@@ -17,25 +17,36 @@ class FlexigridComponent extends Object {
 			'sortable' => 'true',
 			'align'    => 'center'
 		);
-		if (isset($options['fields'])) {
-			foreach ($options['fields'] as $field) {
-				$column = array(
-					'display' => $field,
-					'name' => $field,
-				);
-				$columns[] = array_merge($default_column, $column);
-			}
-		}
-		if (isset($options['columns'])) {
-			foreach ($options['columns'] as $key => $column){
-				$options['columns'][$key] = array_merge($default_column, $column);
-			}
-			$options['columns'] = array_merge($options['columns'], $columns);
-		}else{
-			$options['columns'] = $columns;
+		$default_fields = array('id');
+		
+		if (!isset($options['fields'])) {
+			$options['fields'] = $default_fields;
 		}
 
-		// default buttn setting
+		foreach ($options['fields'] as $field) {
+			$column = array(
+				'display' => $field,
+				'name' => $field,
+			);
+			$fields[$field] = array_merge($default_column, $column);
+		}
+		
+		if (isset($options['columns'])) {
+			foreach ($options['columns'] as $key => $column){
+				if (array_key_exists($column['display'], $fields)) {
+					unset($options['columns'][$key]);
+					$fields[$column['display']] = array_merge($default_column, $column);
+				} else {
+					$fields[$column['display']] = array_merge($default_column, $column);
+					$options['columns'][$key] = array_merge($default_column, $column);
+				}
+			}
+			$options['columns'] = array_merge($fields, $options['columns']);
+		}else{
+			$options['columns'] = $fields;
+		}
+		
+		// default button setting
 		$default_buttons = array(
 			array(
 				'name' => 'Add',
@@ -102,7 +113,7 @@ class FlexigridComponent extends Object {
 			colModel : [";
 		
 		// set columns parameter
-		foreach ($options['columns'] as $column) {
+		foreach ($options['columns'] as $key => $column) {
 			$flexigrid .= "{display: '".$column['display']."', name : '".$column['name']."', width : ".$column['width'].", sortable : ".$column['sortable'].", align: '".$column['align']."'},";
 		}
 		

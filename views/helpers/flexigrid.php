@@ -18,7 +18,6 @@ $('input[type=\"submit\"]').click(function(){
 	$(this).parents('form:first').ajaxSubmit({
 		success: function(responseText, responseCode) {
 			if (responseText==\"success\") {
-				console.log('success');
 				$.jGrowl('".$options['success']."', {header:'add result', theme:'jgSuccess'});
 				$('#dialog').dialog('close');
 				$('#".$this->Controller->name."').flexReload();
